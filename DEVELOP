@@ -60,5 +60,7 @@ plugin.cpp.demo
 
 2.使用.net语言开发插件
 我们强烈建议你使用SiriProxy.Plugins.Interface4Net.PluginServiceImpl这个插件服务类型来实现你的插件，通过调用该类型的静态方法Create来快速生成一个SiriProxy.Plugins.Interface4Net.PluginServiceImpl的实例，通过该实例的
-访问PluginInfo属性，注册相关事件来设置插件相关信息。这么做能够让你不关心底层互操作的细节，更多地专注插件的业务逻辑实现。
+访问PluginInfo属性，注册相关事件来设置插件相关信息。这么做能够让你不关心底层互操作的细节，更多地专注插件的业务逻辑实现。要使程序自动加载你编写的插件，你需要在你编写的.net程序集中定义标签SiriPluginModuleAttribute，
+（即在项目的AssemblyInfo.cs里面加入这样的代码:[assembly: SiriProxy.Plugins.Interface4Net.SiriPluginModule()]），实现SiriProxy.Plugins.Interface4Net.IPluginServiceMain接口，编译程序集，将程序集放到安装目录下的plugins.net
+目录下，重启服务器程序即可自动加载。
 请参见示例项目Plugin.Net.Demo

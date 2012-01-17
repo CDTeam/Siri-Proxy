@@ -1,0 +1,114 @@
+该文档是cd-team的Siri代理服务器架设指引文档
+
+免责声明
+================
+使用前请您先阅读以下并同意以下条款，否则请请删除该项目所涉及的任何资源！
+1>cd-team提供的相关源码，二进制分发文件仅作学习研究用，请勿用于其他用途。
+2>cd-team不对你在使用相关的源码，二进制可执行文件的过程中造成的利益损害，以及引起的法律纠纷承担任何责任。
+3>一旦你使用了该项目的任何资源，既视为你已经接受了上述声明。
+
+
+适用用户
+=================
+首先，必须明确你架设代理服务器的出发点是什么。我们假定你属于以下类型的siri学习和研究的爱好者:
+A.你们是一个小团体，对siri代理服务器架设技术感兴趣，你们的团体中至少有一个人有iphon4s并且愿意和剩下的团友一起分享siri带来的快乐
+B.你是一个iphone4s用户，你会开发或者已经有cd-team的Siri代理服务器兼容的有趣的插件，你希望将代理服务器安装在自己的电脑上，
+  使用你的iphone4s的siri来命令你的电脑做有趣的事情。
+
+如果你是A,B用户中的任意一种，那么恭喜你，安装这个代理服务器相信能给你带来不一样的快乐。当然，如果不幸的是你不符合上述的条件，我们
+相信你是一个坚定的Siri研究爱好者。:P
+
+
+平台及需求
+=================
+你需要一个 guzzoni.apple.com 的 ssl 证书 （可以自己生成 也可使用源码包中的证书）
+
+1.A类用户：
+  1>你们打算使用移动数据传输服务(比如3g)来使用Siri，那么你们需要一台装有windows服务器操作系统的虚拟主机，虚拟主机绑定的
+    域名一个，主机要具有固定的外部IP地址，并且该虚拟主机支持https连接，为该域名颁发的数字证书一个。这里区分这类用户为A1。
+  2>你们打算对Siri的分享仅限于在局域网内部(比如公司局域网，家庭局域网,vpn):用来安装Siri服务器的电脑一台,操作系统为windows xp及以上,
+    什么？你们的公司还是windows 2000? #- -#好吧，运行是否顺利请给cd-team一个反馈，谢谢！这里区分这类用户为A2。
+
+2.B类用户:
+需求很简单：个人电脑一台,操作系统为windows xp及以上,家用无线路由一台。
+
+
+安装及配置
+=================
+主要流程:
+1>. 你需要一个 guzzoni.apple.com 的 ssl 证书 （可以自己生成 也可使用源码包中的证书）, 如果需要将 iPhone 4 服务器独立域名运行 则还需要一个对应域名的证书。
+2>. 编译后 将 .pem 文件 和 .key 文件放入根目录
+3>. 重命名 .pem 文件为 .crt 文件 并在 iPhone 4s 和 iPhone 4 上安装 （可以通过邮件或者网页在 iOS 设备上安装证书）
+4>. 在服务器上安装 MySQL （http://www.mysql.com/downloads/mysql/） 安装完成后执行 database.sql 脚本初始化数据库
+5>. 配置 .properties 文件中的 MySQL 连接信息 iPhone 4 与 iPhone 4s 服务器的 ip 地址 如需独立启动 iPhone 4 服务器 则需将 server.iphone4.enable 设置为 true
+6>. 配置日志子系统 建议使用 文件日志子系统 （将 文件日志子系统 之后内容前的 # 全部去掉 将 控制台日志子系统 之后全部行首加上 #
+7>. 配置 DNS 服务器 将 guzzoni.apple.com 域名解析至 架设 Siri Proxy 服务器的 ip (iPhone 4 的话也可通过修改 hosts 文件实现) 
+
+
+
+详细流程说明:
+1.A类用户:安装我们提供的程序安装包,安装mysql(开发者版即可，可以到http://www.mysql.com/downloads/mysql/下载)，然后使用MySQL数据库管理工具，
+建立一个名叫SiriProxy的数据库，执行数据库安装包里的数据库脚本database.sql。对MySQL不熟悉的可以请教度娘。修改配置文件(SiriProxySrv.properties或者SiriProxySrv4Net.properties)，
+修改MySQL的数据库连接参数:
+ #A类用户设置为true，B类用户设置为false
+database.mysql.enable=true
+ #数据库名，一般不用改
+database.mysql.dbname=siri_proxy
+ #用户名
+database.mysql.user=root
+#密码
+database.mysql.password=root 
+
+准备一个针对你这个服务器域名的证书，如果这是一个可信的证书及私钥(RSA私钥)，证书的扩展名一般是crt,假设你的证书为cert.crt,rsa私钥为rsa.key,
+那么，在配置文件中，请修改或者添加如下配置对:
+openSSL.server.privateKeyFile = ${application.configDir}rsa.key
+openSSL.server.caConfig = ${application.configDir}cert.crt
+请注意:如果提供的rsa不是可信机构颁发的，那么你必须将cert.crt导入到要连接到这个服务器的各个iphone4设备里，这样iPhone4的siri才能连接成功，
+否则请确保证书是可信机构颁发的
+
+为服务器配置地址信息
+#------------------------------iphone4s开始------------------------------
+#用于iPhone4s连接的服务器使用下面的配置信息,该服务器的证书必须是颁发给guzzoni.app.com的,iphone4s一旦连接上该服务器，除了提供消息转发外，iphone4s
+#的相关密钥数据也被实时采集到了服务器的数据库中,密钥数据库中存在密钥可以供iphone4使用，保证iphone4成功访问siri服务器
+#端口号
+server.iphone4s.port   = 443
+#IPv4或者IPv6地址
+server.iphone4s.IPv4v6   = 192.168.1.187   
+#线程池最大线程数   
+server.iphone4s.threadPool.maxThreads = 512
+#线程池最小活动线程数
+server.iphone4s.threadPool.minThreads = 2
+#证书私钥
+server.iphone4s.openssl.privateKeyFile=${application.configDir}guzzoni.app.com.key
+#证书文件
+server.iphone4s.openssl.caConfig = ${application.configDir}guzzoni.app.com.crt
+#------------------------------iphone4s结束------------------------------
+
+#------------------------------iphone4开始------------------------------
+#用于iPhone4连接的服务器使用下面的配置信息
+server.iphone4.port = 443
+server.iphone4.IPv4v6 = 192.168.1.222 		#要保证与server.iphone4s.IPv4v6的配置值不同
+server.iphone4.threadPool.maxThreads = 2048
+server.iphone4.threadPool.minThreads = 8
+#------------------------------iphone4结束------------------------------
+
+使用iphone4s的朋友这时候是该给力的时候，首先让iphone4s通过wifi连接到internet,将server.iphone4s.openssl.caConfig指定的证书导入到iphone4s，修改iphone4s的
+的wifi的dns，这个dns应该需要将guzzoni.app.com映射到你的虚拟主机的外部ip地址。我们通常的做法是在局域网内部指定一个电脑D，该电脑安装有windows 2003或者linux，
+为D安装dns服务器(2003系统自带),linux推荐使用bind9，不会安装的可问度娘。在D的dns服务器将guzzoni.app.com映射到虚拟主机，或者局域网内部的装有SiriProxy的电脑的ip地址，
+然后将iphone4s的dns地址改为电脑D的ip地址就可以了，当然如果你的iphone4s是已经越狱了的，那么什么dns都是浮云，你直接修改host就可以了。
+
+2.B类用户:
+B类用户可以选择不安装数据库，因此，要把配置文件里面的是否启用 mysql数据库设置为false,如下
+database.mysql.enable=false
+而且，该类用户也不需要支持iphone4用户的连接，所以，可以选择不打开iphone4服务器(好处是你不用配置一机多个ip地址了),修改配置文件对应的字段为:
+server.iphone4.enable=false
+
+首先，安装程序，然后你要保证你的iPhone4s和服务器的电脑在同一个局域网，同时iPhone4s的DNS指向你自己的DNS服务，这个DNS服务器可以是一个虚拟机，
+实际上，你可以将这个DNS服务器通过虚拟机安装在和Siri服务器在同一台电脑上,DNS服务器要做得工作就是修改guzzoni.app.com到Siri Proxy安装的服务器地址
+
+
+
+运行服务器
+=================
+浏览到安装目录，双击register.bat，将服务程序注册为windows服务,双击start.bat可以启动服务，当然，你应该发现了,unregister.bat,stop.bat分别是注销(卸载)和停止服务
+

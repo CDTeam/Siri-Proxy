@@ -1,0 +1,4 @@
+LIBRARY	"SiriProxy"
+EXPORTS
+ServerMain @1
+RegisterPluginInfo @2

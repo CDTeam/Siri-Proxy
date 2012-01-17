@@ -1,0 +1,64 @@
+该文档是cd-team的SiriProxy项目的指引文档，面向开发者，将指导你快速地了解源代码的项目结构，依赖，以及如何开发SiriProxy的插件
+
+许可
+================
+该项目在LGPL许可，即GNU Lesser General Public License (GNU 宽通用公共许可证)下开源，你可以在遵循LGPL协议允许的前提下对源代码进行修改，对二进制文件进行再次分发，我们欢迎广大程序爱好者加入进来，共同完善本项目。
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO EVENT
+SHALL THE COPYRIGHT HOLDERS OR ANYONE DISTRIBUTING THE SOFTWARE BE LIABLE
+FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.
+
+
+如何编译
+================
+该项目的核心库采用c/c++语言编写，对于插件支持模块，同时提供了.net的绑定接口(SiriProxy.Plugins.Interface4Net)，即如果你要完整地编译解决方案下的所有项目，我们建议你使用至少是visual studio 2008 或者以上版本来编译。
+1.平台需求
+  1>c\c++编译器:visual c++,建议使用集成开发环境visual studio 2008
+  2>如果你需要.net插件的支持，请确保你的系统安装有.net 运行时 2.0以上(visual studio 2008 默认安装会自带.net)
+  3>该项目开源c++框架Poco的支持，你可以访问http://pocoproject.org/,我们已经预先编译好的Poco相关库文件(编译于vc 9.0)，为了方便，你可以不做修改直接使用，如果你有其他的需求需要自行编译，
+    请访问其官网，下载相关的源文件进行编译
+
+2.编译
+解压源文件包到任意目录，假设解压后的目录名为SRC,那么，SRC下的子目录构成应该如下:
+SiriProxy 				#目录,SiriProxy.dll核心项目，由c/c++语言实现
+SiriProxySrv				#目录,SiriProxySrv.exe,c/c++语言实现的服务器可执行程序
+SiriProxy.Plugins.Interface4Net		#目录,SiriProxy.Plugins.Interface4Net,c#语言实现的插件模块.net绑定接口,该程序集能够帮助.net开发人员显著地降低开发插件的难度和工作量，而不必过多地关系插件底层和c语言交互的细节.
+SiriProxySrv4Net			#目录,SiriProxySrv4Net.exe,c#语言实现的服务器可执行程序，如果你的服务器需要兼容.net插件，你应该从该程序启动服务器
+Plugin.Net.Demo				#目录,Plugin.Net.Demo.dll,c#语言实现的演示插件
+plugin.cpp.demo				#目录,plugin.cpp.demo.dll,c/c++语言实现的演示插件
+libplist++				#目录,该项目从开源的plist解析库libplist移植而来，做为libplist的visual c++绑定
+bin					#目录,包含整个项目的程序在运行过程中可能需要用到的二进制文件(如果你自己编译Poco,该文件夹内的所有Poco开头的二进制文件你可以无视)
+lib					#目录,包含整个项目在编译时的链接库(如果你自己编译Poco,该文件夹内的所有Poco开头的库你可以无视)
+include					#目录,包含额外的，在项目中引用的头文件
+Debug					#目录,编译debug版本，所有二进制文件都在该目录下生成
+Release					#目录,编译Release版本，所有二进制文件都在该目录下生成
+
+编译SiriProxy时，应该确保项目的包含路径包含有Poco框架的相关头文件，如果你没有对原始的文件有所改动，用visual studio 2008及以上的集成开发环境打开SiriProxy.sln，选择重新编译整个解决方案，一切都会OK.
+
+
+
+插件加载机制
+================
+假设程序运行根目录是$(root)
+如果服务器从SiriProxySrv.exe启动，采用默认的插件查找机制，只查找$(root)\plugins下的c/c++插件，如果服务器从SiriProxySrv4Net.exe启动，则会同时查找$(root)\plugins下得c/c++插件以及$(root)\plugins.net目录下的.net插件
+对于c/c++实现的插件，程序会尝试对目标dll进行加载，查找PluginInitMain的函数地址，如果该地址不为0，则调用该函数，该函数应该返回一个包含注册一个插件所需的正确信息，如果一切顺利，该dll将会作为一个插件加载。对于.net实现的插件，
+插件的.net绑定接口对插件的查找和加载进行了扩展，动态地利用.net的反射机制来查找和加载.net程序集：首先检测目标dll是否是一个.net程序集,如果是，则检测该程序集是否具有SiriPluginModuleAttribute标签，如果存在该标签，则表明该程序集
+应该作为插件加载，通过反射机制，查找该程序集下所有实现了IPluginServiceMain接口的类型class，反射构造class的实例，调用IPluginServiceMain的接口方法来获取插件的元数据，然后注册插件
+
+
+如何:开发插件
+================
+1.使用c/c++语言开发插件
+在你的插件模块里定义一个函数签名为extern "C" PluginInfo* PluginInitMain()的函数(extern "C"保证函数名称编译后不会意外改变,如果你不加extern "C"，你也可以在def文件里声明),正确地实现该函数，返回正确的插件信息即可,请参见示例项目
+plugin.cpp.demo
+
+插件所涉及各个结构的字段说明，函数声明，请看源文件的相关注释(类型定义头文件，SRC\SiriProxy\PluginAdapter.h,)
+
+2.使用.net语言开发插件
+我们强烈建议你使用SiriProxy.Plugins.Interface4Net.PluginServiceImpl这个插件服务类型来实现你的插件，通过调用该类型的静态方法Create来快速生成一个SiriProxy.Plugins.Interface4Net.PluginServiceImpl的实例，通过该实例的
+访问PluginInfo属性，注册相关事件来设置插件相关信息。这么做能够让你不关心底层互操作的细节，更多地专注插件的业务逻辑实现。
+请参见示例项目Plugin.Net.Demo

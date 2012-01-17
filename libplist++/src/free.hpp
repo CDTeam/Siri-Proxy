@@ -1,0 +1,1 @@
+#define free PlistFreeMem //覆盖free函数,应该使用libplist导出的PlistFreeMem来释放动态分配的内存

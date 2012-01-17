@@ -1,0 +1,4 @@
+LIBRARY	"plugin.cpp.demo"
+EXPORTS
+
+PluginInitMain @1

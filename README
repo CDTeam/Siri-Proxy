@@ -35,18 +35,8 @@ B.ÄãÊÇÒ»¸öiphone4sÓÃ»§£¬Äã»á¿ª·¢»òÕßÒÑ¾­ÓÐcd-teamµÄSiri´úÀí·þÎñÆ÷¼æÈÝµÄÓÐÈ¤µÄ²å¼
 
 °²×°¼°ÅäÖÃ
 =================
-Ö÷ÒªÁ÷³Ì:
-1>. ÄãÐèÒªÒ»¸ö guzzoni.apple.com µÄ ssl Ö¤Êé £¨¿ÉÒÔ×Ô¼ºÉú³É Ò²¿ÉÊ¹ÓÃÔ´Âë°üÖÐµÄÖ¤Êé£©, Èç¹ûÐèÒª½« iPhone 4 ·þÎñÆ÷¶ÀÁ¢ÓòÃûÔËÐÐ Ôò»¹ÐèÒªÒ»¸ö¶ÔÓ¦ÓòÃûµÄÖ¤Êé¡£
-2>. ±àÒëºó ½« .pem ÎÄ¼þ ºÍ .key ÎÄ¼þ·ÅÈë¸ùÄ¿Â¼
-3>. ÖØÃüÃû .pem ÎÄ¼þÎª .crt ÎÄ¼þ ²¢ÔÚ iPhone 4s ºÍ iPhone 4 ÉÏ°²×° £¨¿ÉÒÔÍ¨¹ýÓÊ¼þ»òÕßÍøÒ³ÔÚ iOS Éè±¸ÉÏ°²×°Ö¤Êé£©
-4>. ÔÚ·þÎñÆ÷ÉÏ°²×° MySQL £¨http://www.mysql.com/downloads/mysql/£© °²×°Íê³ÉºóÖ´ÐÐ database.sql ½Å±¾³õÊ¼»¯Êý¾Ý¿â
-5>. ÅäÖÃ .properties ÎÄ¼þÖÐµÄ MySQL Á¬½ÓÐÅÏ¢ iPhone 4 Óë iPhone 4s ·þÎñÆ÷µÄ ip µØÖ· ÈçÐè¶ÀÁ¢Æô¶¯ iPhone 4 ·þÎñÆ÷ ÔòÐè½« server.iphone4.enable ÉèÖÃÎª true
-6>. ÅäÖÃÈÕÖ¾×ÓÏµÍ³ ½¨ÒéÊ¹ÓÃ ÎÄ¼þÈÕÖ¾×ÓÏµÍ³ £¨½« ÎÄ¼þÈÕÖ¾×ÓÏµÍ³ Ö®ºóÄÚÈÝÇ°µÄ # È«²¿È¥µô ½« ¿ØÖÆÌ¨ÈÕÖ¾×ÓÏµÍ³ Ö®ºóÈ«²¿ÐÐÊ×¼ÓÉÏ #
-7>. ÅäÖÃ DNS ·þÎñÆ÷ ½« guzzoni.apple.com ÓòÃû½âÎöÖÁ ¼ÜÉè Siri Proxy ·þÎñÆ÷µÄ ip (iPhone 4 µÄ»°Ò²¿ÉÍ¨¹ýÐÞ¸Ä hosts ÎÄ¼þÊµÏÖ) 
-
-
-
 ÏêÏ¸Á÷³ÌËµÃ÷:
+
 1.AÀàÓÃ»§:°²×°ÎÒÃÇÌá¹©µÄ³ÌÐò°²×°°ü,°²×°mysql(¿ª·¢Õß°æ¼´¿É£¬¿ÉÒÔµ½http://www.mysql.com/downloads/mysql/ÏÂÔØ)£¬È»ºóÊ¹ÓÃMySQLÊý¾Ý¿â¹ÜÀí¹¤¾ß£¬
 ½¨Á¢Ò»¸öÃû½ÐSiriProxyµÄÊý¾Ý¿â£¬Ö´ÐÐÊý¾Ý¿â°²×°°üÀïµÄÊý¾Ý¿â½Å±¾database.sql¡£¶ÔMySQL²»ÊìÏ¤µÄ¿ÉÒÔÇë½Ì¶ÈÄï¡£ÐÞ¸ÄÅäÖÃÎÄ¼þ(SiriProxySrv.properties»òÕßSiriProxySrv4Net.properties)£¬
 ÐÞ¸ÄMySQLµÄÊý¾Ý¿âÁ¬½Ó²ÎÊý:

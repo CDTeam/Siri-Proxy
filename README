@@ -47,7 +47,7 @@ database.mysql.dbname=siri_proxy
  #用户名
 database.mysql.user=root
 #密码
-database.mysql.password=root 
+database.mysql.password=root
 
 准备一个针对你这个服务器域名的证书，如果这是一个可信的证书及私钥(RSA私钥)，证书的扩展名一般是crt,假设你的证书为cert.crt,rsa私钥为rsa.key,
 那么，在配置文件中，请修改或者添加如下配置对:
